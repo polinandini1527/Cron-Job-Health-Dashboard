@@ -42,7 +42,7 @@ The Cron Job Health Dashboard provides:
 
 | Role | Name | Email | Contact | Responsibilities |
 |------|------|-------|---------|------------------|
-| **Project Lead / AI Engineer** | Poli Nandini| nandhinipoli2005@gmail.com | 9676018629 | Prompt engineering, validation constraints, Gemini API SDK client integration |
+| **Project Lead / AI Engineer** | POLI NANDINI| nandhinipoli2005@gmail.com | 9676018629 | Prompt engineering, validation constraints, Gemini API SDK client integration |
 | **Backend / DevOps Specialist** | POKALA RAJESWARI | rajeswaripokala16@gmail.com | 9390745228 | SQLite metrics data pipelines, subprocess capturing frameworks, pytest configurations |
 | **Frontend Engineer** | PETLU ARAVINDH KUMAR | petluaravindhkumar@gmail.com | 9949609804 | Streamlit UI interactive development, Plotly timeline chart renderings |
 
