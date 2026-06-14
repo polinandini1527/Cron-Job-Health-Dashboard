@@ -78,7 +78,7 @@ Dynamic interactive timeline chart showing job execution durations over time, bu
 ### 3.5 Gemini AI Anomaly Interpreter
 **Module:** `src/llm_helper.py` → `get_anomaly_narration(logs_df)`
 
-Consumes structural logs data dataframes and targets the production `gemini-1.5-flash` environment to narrate silent issues instantly.
+Consumes structural logs data dataframes and targets the production `gemini-2.5-flash` environment to narrate silent issues instantly.
 
 ## 4. System Architecture Overview
 
@@ -225,6 +225,9 @@ Cron-Job-Health-Dashboard/
 ├── prompts.md                     # Engineering breakdown of prompt structures
 └── ai_usage_note.md               # Mandatory development AI reflection document
 ```
+## 10. Demo Video & Presentation Materials
+### Demo Video Link
+👉 **[Watch our End-to-End Demo Video on Google Drive] https://drive.google.com/file/d/1MPoZ4u6pz5WRPj4ovdXhR3QuvmLMzMrg/view?usp=drivesdk **
 
 **Document Version:** 1.1
 
