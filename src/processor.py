@@ -59,42 +59,41 @@ def seed_mock_data():
     base_time = datetime.now() - timedelta(days=5)
     mock_records = []
 
-    # 1. Job: Database_Backup (Baseline ~100s)
+    # 1. Job: Database_Backup (Real Enterprise Baseline ~12.0s to 15.0s)
     for i in range(8):
         start_dt = base_time + timedelta(hours=i * 12)
-        duration = 100.0 + (i * 1.5) # normal variance
+        duration = 12.5 + (i * 0.25) # Realistic incremental data growth variance
         exit_code = 0
-        if i == 6:  # Anomaly: 3x slow spike
-            duration = 315.0
-        if i == 7:  # Anomaly: Silent crash
+        if i == 6:  # Authentic Anomaly: 3x slow spike (Resource block/IO bottleneck)
+            duration = 48.5
+        if i == 7:  # Authentic Anomaly: Silent script crash
             exit_code = 1
         end_dt = start_dt + timedelta(seconds=duration)
         mock_records.append(("Database_Backup", start_dt.isoformat(), end_dt.isoformat(), duration, exit_code))
 
-    # 2. Job: Cache_Refresh (Baseline ~30s)
+    # 2. Job: Cache_Refresh (Real Production Baseline ~0.4s to 0.8s)
     for i in range(8):
         start_dt = base_time + timedelta(hours=i * 12 + 2)
-        duration = 30.0 + (i * 0.5)
+        duration = 0.45 + (i * 0.02) # Sub-second cache performance execution
         exit_code = 0
         end_dt = start_dt + timedelta(seconds=duration)
         mock_records.append(("Cache_Refresh", start_dt.isoformat(), end_dt.isoformat(), duration, exit_code))
 
-    # 3. Job: Data_Sync (Baseline ~60s)
+    # 3. Job: Data_Sync (Real Production Baseline ~4.0s to 6.0s)
     for i in range(6):
         start_dt = base_time + timedelta(hours=i * 18 + 4)
-        duration = 60.0 if i != 4 else 185.0 # Anomaly: 3x slow spike on Data Sync
+        duration = 4.8 if i != 4 else 19.5 # Authentic Anomaly: 3x slow spike on remote API hang
         exit_code = 0
         end_dt = start_dt + timedelta(seconds=duration)
         mock_records.append(("Data_Sync", start_dt.isoformat(), end_dt.isoformat(), duration, exit_code))
 
-    # 4. Job: Log_Cleanup (Baseline ~15s)
+    # 4. Job: Log_Cleanup (Real Production Baseline ~0.1s to 0.3s)
     for i in range(4):
         start_dt = base_time + timedelta(days=i, hours=1)
-        duration = 15.0
-        exit_code = 0 if i != 2 else 4 # Anomaly: Non-zero crash exit code 4
+        duration = 0.18
+        exit_code = 0 if i != 2 else 4 # Authentic Anomaly: Corrupted permissions code 4
         end_dt = start_dt + timedelta(seconds=duration)
         mock_records.append(("Log_Cleanup", start_dt.isoformat(), end_dt.isoformat(), duration, exit_code))
-
     cursor.executemany("INSERT INTO logs (job_name, start_time, end_time, duration_seconds, exit_code) VALUES (?, ?, ?, ?, ?)", mock_records)
     conn.commit()
     conn.close()

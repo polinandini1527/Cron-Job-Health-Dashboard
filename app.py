@@ -164,5 +164,30 @@ def main():
     else:
         st.info("Adjust filters to view custom visual charts.")
 
+    st.divider()
+    st.header("⚡ Live Subprocess Wrapper Execution")
+    st.markdown("Simulate and run a real-time cron job command to test the tracking pipeline live.")
+    
+    with st.form("live_job_runner"):
+        c_name = st.text_input("Job Name", value="AdHoc_DataSync")
+        c_command = st.text_input("Shell Command String", value="echo 'Pipeline Processing Run Complete'")
+        submit_run = st.form_submit_button("🚀 Dispatch Task Wrapper")
+        
+        if submit_run:
+            with st.spinner("Subprocess executing..."):
+                from src.processor import run_cron_job
+                result_metrics = run_cron_job(c_name, c_command)
+                
+                # Clear narrative cache to force Gemini to analyze the new entry
+                if "cached_narration" in st.session_state:
+                    del st.session_state["cached_narration"]
+                
+                # FIX: Changed 'duration_seconds' to 'duration' to match src/processor.py return schema
+                if result_metrics["exit_code"] == 0:
+                    st.success(f"Task executed smoothly in {result_metrics['duration']:.4f}s (Exit Code: 0)")
+                else:
+                    st.error(f"Task encountered a non-zero exit crash state! (Exit Code: {result_metrics['exit_code']})")
+                st.rerun()
+
 if __name__ == "__main__":
     main()

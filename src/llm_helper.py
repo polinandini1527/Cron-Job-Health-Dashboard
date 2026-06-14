@@ -28,24 +28,31 @@ def get_anomaly_narration(logs_df: pd.DataFrame) -> str:
     latest_logs_summary = logs_df.tail(10).to_markdown(index=False)
 
     prompt = f"""
-    You are an automated Site Reliability Engineer assistant. Look at these cron execution logs:
+    You are an automated Site Reliability Engineer (SRE) assistant. Analyze these system cron execution logs:
     
     {latest_logs_summary}
     
-    Identify any critical anomalies such as jobs running 3x slower than their historical baseline average or jobs exiting with a non-zero exit code.
-    
-    Format rules for your output:
-    1. Use emojis cleanly to indicate severity (🚨 for failures, ⚠️ for duration spikes).
-    2. Wrap job names and exit codes in backticks so they stand out as code (e.g., `Database_Backup`).
-    3. Keep sentences short, actionable, and professional.
-    
-    Example Output Style:
-    - 🚨 **Job Failure:** `Database_Backup` failed silently with exit code `1` on 2026-06-12 at 05:23.
-    - ⚠️ **Performance Spike:** `Cache_Refresh` ran 3x slower than its weekly average baseline.
-    
-    If everything looks healthy, say 'All systems operating within normal parameters.'
-    """
+    Task Instructions:
+    1. Scan the tail-end records and identify critical anomalies: tasks running 3x slower than their historical baseline average, or tasks terminating with a non-zero exit code.
+    2. For EVERY individual anomaly detected, you MUST print it on a NEW LINE. Do not group them into a single paragraph.
+    3. For each failure or spike, provide a 1-sentence analytical guess as to WHY it happened (Root Cause Analysis), and a 1-sentence operational SOLUTION.
 
+    Strict Output Format Rules:
+    - Use '🚨' for silent execution failures (exit code != 0).
+    - Use '⚠️' for performance bottlenecks ( runtimes >= 3x baseline).
+    - Use markdown bullet points ('- ') to force a newline break for each individual alert.
+    - Wrap job identifiers and exit statuses in backticks (e.g., `Database_Backup`).
+
+    Example Output Structure to Emulate:
+    - 🚨 **Job Failure:** `Database_Backup` failed silently with exit code `1` on 2026-06-12 at 05:23. 
+      * *Possible Root Cause:* Likely caused by database locking, a broken credential chain, or an unmounted backup drive volume.
+      * *Recommended Action:* Verify database port availability, check connection string environment variables, and inspect raw `stderr` logs.
+    - ⚠️ **Performance Bottleneck:** `Data_Sync` ran 3x slower than its weekly rolling average at 21:23.
+      * *Possible Root Cause:* Network latency spikes, massive transaction payloads, or underlying disk I/O throat contention.
+      * *Recommended Action:* Optimize the target SQL query indexing patterns or adjust the task scheduler execution matrix to off-peak processing hours.
+
+    If everything looks completely healthy across all records, say exactly: 'All systems operating within normal parameters.'
+    """
     try:
         # FIX: Using the newest, globally supported model identifier string
         response = client.models.generate_content(
