@@ -17,8 +17,8 @@ Enterprise production environments depend on scheduled jobs (cron tasks) for cri
 #### Technical Problem
 **Silent Failures:** Cron jobs often fail silently or with performance degradation without triggering alerts. Traditional cron implementations provide minimal feedback—they either succeed (exit code 0) or fail (non-zero exit code), but this binary state provides no insight into:
 
-- **Performance Anomalies**: A backup job that normally completes in 100 seconds suddenly taking 300+ seconds indicates resource contention, I/O bottlenecks, or deadlocks—but without telemetry, engineers discover this only when the job fails or SLA breaches occur.
-- **Silent Failures**: A job exits with code 0 (success) but produces corrupted or incomplete output. Without captured stdout/stderr and execution metrics, root cause analysis becomes a forensic nightmare.
+- **Performance Anomalies**: A backup job that normally completes in 12 seconds suddenly taking 48+ seconds indicates resource contention, I/O bottlenecks, or deadlocks—but without telemetry, engineers discover this only when the job fails or SLA breaches occur.
+- **Silent Failures**: A job exits with a non-zero code but prints no direct diagnostic output. Without captured execution metrics, root cause analysis becomes a forensic nightmare.
 - **Degradation Trends**: Early warning signs—gradual slowdown over days—go unnoticed until critical failure occurs.
 - **Operational Blindness**: Without structured logging, troubleshooting requires manual log file inspection across multiple servers, consuming hours of engineering effort per incident.
 
@@ -30,8 +30,8 @@ Enterprise production environments depend on scheduled jobs (cron tasks) for cri
 #### Why This Solution Matters
 The Cron Job Health Dashboard provides:
 1. **Structured Telemetry**: Every job execution captures start time, end time, duration, and exit code into a queryable SQLite database.
-2. **Real-Time Anomaly Detection**: AI-powered analysis identifies jobs running 3x slower than baseline or exiting with failure codes.
-3. **Executive Visibility**: A single-pane dashboard gives operators immediate status of all scheduled tasks.
+2. **Real-Time Anomaly Detection**: AI-powered SRE analysis identifies jobs running 3x slower than baseline or exiting with failure codes.
+3. **Premium Executive User Interface**: A modern web workspace styling telemetry logs cleanly into enterprise KPI blocks and responsive timeline components.
 4. **Minimal Overhead**: Subprocess wrapper adds negligible resource footprints.
 5. **Scalability Path**: SQLite is the foundation; migration to PostgreSQL/ClickHouse is a 2-line change.
 
@@ -57,57 +57,54 @@ Executes arbitrary shell commands, captures precise timing (start/end), records 
 **Module:** `src/processor.py` → `init_db()`
 Persistent SQLite database at `data/cron_logs.db` with an optimized schema structure.
 
-### 3.3 Streamlit Web Dashboard UI
+### 3.3 Premium Executive Streamlit Workspace
 **Module:** `app.py`
-Interactive single-page dashboard featuring high-level aggregates, state-preserving session flags, and responsive custom component controls.
+A high-end single-page visualization application injected with custom corporate CSS layouts. It features isolated workspace title sections, responsive layout configurations, dynamic colored border highlights, and interactive data grids.
 
-### 3.4 Interactive Live Job Dispatcher (New)
-**Module:** `app.py` → `Live Subprocess Wrapper Execution`
-Allows operators to enter arbitrary shell command strings inside the dashboard UI to dispatch jobs in real-time. Successful commands output green operational indicators, while invalid commands register non-zero exit errors on a red panel and automatically append the metrics to the SQLite logging layer for active AI evaluation.
+### 3.4 Interactive Live Job Dispatcher Form
+**Module:** `app.py` → `Live Subprocess Runner Form`
+Allows operators to enter arbitrary shell command strings inside the dashboard UI to dispatch tasks in real-time. Successful commands output green operational indicators, while invalid commands register non-zero exit errors on a red panel and automatically update the metrics database.
 
-### 3.5 Gemini AI Anomaly Interpreter with Root Cause Analysis
-**Module:** `src/llm_helper.py` → `get_anomaly_narration(logs_df)`
+### 3.5 SRE Streaming Anomaly Parsing Engine
+**Module:** `src/llm_helper.py` & `app.py` → `render_dynamic_ai_insights()`
+Consumes logs and evaluates them using the `gemini-2.5-flash` model. The UI includes an automated string parsing engine that splits raw textual inputs line-by-line, strips unrendered formatting tags, and isolates errors inside colored system alert cards (Red for critical exceptions, Amber for performance spikes).
 
-Consumes telemetric data logs and leverages the `gemini-2.5-flash` model to output clean, newline-separated summaries detailing what failed, guessing the probable technical root cause, and recommending clear operational solutions.
+---
 
 ## 4. System Architecture Overview
-
 ```
+
 ┌─────────────────────────────────────────────────────────────────┐
 │                    CRON JOB SCHEDULER (OS-Level)                │
 └────────────────┬─────────────────────────────────────────────────┘
-                 │
-                 ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────┐
 │         PYTHON SUBPROCESS WRAPPER (src/processor.py)             │
 │  • Capture start_time & execute command via subprocess          │
 │  • Record exit code & calculate duration                        │
 │  • Auto-insert metrics into SQLite                              │
 └────────────────┬─────────────────────────────────────────────────┘
-                 │
-                 ▼
+│
+▼
 ┌──────────────────────────────────────────────────────────────────┐
 │         SQLITE3 PERSISTENT TELEMETRY DATABASE                    │
 │  data/cron_logs.db (26 bulk sample rows with 4 anomalies)        │
 └────────────────┬─────────────────────────────────────────────────┘
-                 │
-         ┌───────┴────────────┐
-         │                    │
-         ▼                    ▼
-┌──────────────────────┐  ┌─────────────────────────────────────┐
-│   STREAMLIT UI       │  │   GEMINI AI ANOMALY DETECTOR        │
-│   (app.py)           │  │   (src/llm_helper.py)               │
-│                      │  │                                     │
-│ • Metrics Cards      │  │ • Analyze recent logs               │
-│ • Duration Chart     │  │ • Identify 3x slowdowns & failures  │
-│ • Raw Data Table     │  │ • Generate narration via client SDK │
-│ • Filter Insights    │  │                                     │
-└──────────────────────┘  └─────────────────────────────────────┘
-         ▲                     │
-         └─────────────────────┘
-         
-         USER BROWSERS: http://localhost:8501
+│
+▼
+┌──────────────────────────────────────────────────────────────────┐
+│             PREMIUM STREAMLIT WEB FRAMEWORK (app.py)             │
+│                                                                  │
+│  ├── [Top Header Card] Isolated Title Title Box Component        │
+│  ├── [KPI Summary Grid] Total Runs, Fail Rate, & Avg Duration    │
+│  ├── [AI SRE Agent Panel] Parsed Multi-Line Severity Boxes       │
+│  ├── [System Line Chart] Plotly Metric Performance Timeline      │
+│  └── [Data Explorer Panel] Sidebar Filtering & Form Runner       │
+└──────────────────────────────────────────────────────────────────┘
+
 ```
+---
 
 ## 5. Tools and Technologies Used
 
@@ -123,10 +120,11 @@ Consumes telemetric data logs and leverages the `gemini-2.5-flash` model to outp
 | **tabulate** | Formatting Engine | Core engine driving clean string matrix generation workflows |
 | **pytest** | Automated Quality Assurance | Simple framework validating table schema configurations |
 
+---
+
 ## 6. Local Setup & Run Instructions
 
 ### Prerequisites
-
 - Python 3.11+ installed environment
 - Valid Gemini API credential generated from Google AI Studio
 
@@ -140,7 +138,9 @@ cd d:\GitHub\Cron-Job-Health-Dashboard
 #### Step 2: Install Locked System Dependencies
 To prevent compiler generation crashes across standard environments, install using the pre-compiled binary flag instruction:
 
-```bash
+Bash
+
+```
 pip install --only-binary=:all: -r requirements.txt
 ```
 
@@ -154,51 +154,66 @@ GEMINI_API_KEY=your_actual_api_studio_key_string
 #### Step 4: Run Database Test Suite
 Confirm your structural configuration is passing validation checks smoothly:
 
-```bash
+Bash
+
+```
 pytest
 ```
 
 #### Step 5: Launch the Production Web Server App
 Execute Streamlit as a runtime module directly to ensure Windows environment lookup safety:
 
-```bash
+Bash
+
+```
 python -m streamlit run app.py
 ```
 
-## 7. Sample Input & Output
-
-### Sample Database Log Entry Telemetry Output (Authentic Production Baselines)
-
-```text
-id   job_name           duration_seconds   exit_code   Notes
-──────────────────────────────────────────────────────────────────────────
-1    Database_Backup    12.5000            0           ✓ Normal baseline
-2    Cache_Refresh      0.4500             0           ✓ Normal sub-second baseline
-13   Database_Backup    48.5000            0           🔴 3x Duration Spike (Anomaly)
-15   Cache_Refresh      0.5200             1           🔴 Silent Script Crash (Anomaly)
-```
-
-### Dashboard Markdown Output Examples (Root Cause Analysis & Remedies)
-
-- 🚨 **Job Failure:** `Database_Backup` failed silently with exit code `1` on 2026-06-13 at 05:48. *Possible Root Cause:* Likely caused by database row-locking table contention or a missing authorization token parameter.
-- *Recommended Action:* Verify target port connectivity, inspect environment credentials, and scan raw system logs.
-
-- ⚠️ **Performance Spike:** `Data_Sync` experienced a runtime processing bottleneck at 21:23. *Possible Root Cause:* High transaction payloads, unindexed lookup columns, or network latency overhead on a remote API route.
-- *Recommended Action:* Refactor query lookup indexes or shift execution windows to off-peak infrastructure hours.
-
-## 8. AI Capability Demonstrated
+## 7. AI Capability Demonstrated
 
 ### LLM Model: Google Gemini 2.5 Flash (`google-genai` SDK)
-
 **Core Diagnostic Capabilities:**
+
 1. **Multi-Line Trend Evaluation**: Segregates independent system warnings cleanly onto distinct lines to optimize dashboard presentation parameters.
 2. **Predictive Root Cause Analysis (RCA)**: Evaluates structural numerical anomalies to predict *why* an environment crashed or experienced disk contention.
 3. **Actionable Recovery Steps**: Prescribes immediate technical troubleshooting guidelines for an on-call engineer, lowering Mean Time To Recovery (MTTR).
 
-**System Instruction Sample:**
-> *"For each failure or spike, provide a 1-sentence analytical guess as to WHY it happened (Root Cause Analysis), and a 1-sentence operational SOLUTION. Use bullet points to force clean newline breaks for each individual tracking statement. Ensure your tone is objective and actionable, providing the on-call engineering team with immediate diagnostic next-steps."*
-## 9. Appendix: Project Folder Structure Blueprint
+## 8. Sample Input & Output
 
+### 8.1 Captured Database Telemetry Records (Active Production Store)
+When the background subprocess intercepts system execution tasks, metrics are structured directly into the local SQLite logging table schema layout:
+
+| id | job_name | start_time | end_time | duration_seconds | exit_code |
+|---|---|---|---|---|---|
+| 1 | `Database_Backup` | `2026-06-10 06:13:26` | `2026-06-10 06:13:38` | **12.7500** | 0 *(Normal Baseline)* |
+| 7 | `Database_Backup` | `2026-06-12 18:13:26` | `2026-06-12 18:14:14` | **48.5000** | 0 *(⚠️ 3x Slow Duration Anomaly)* |
+| 8 | `Database_Backup` | `2026-06-13 06:13:26` | `2026-06-13 06:13:40` | **14.2500** | 1 *(🚨 Silent Execution Script Crash)* |
+| 9 | `Cache_Refresh` | `2026-06-09 20:13:26` | `2026-06-09 20:13:26` | **0.4500** | 0 *(Normal Sub-Second Run)* |
+
+### 8.2 Dashboard Refined Parsing Box Output Layout
+The application's background processing engine strips raw markdown syntax strings automatically and organizes incidents into dedicated corporate style warning blocks:
+
+#### Case A: Critical Background Error Card
+```html
+🚨 Job Failure: Database_Backup failed silently with exit code 1 on 2026-06-13 at 20:05.
+
+**🔍 Probable Cause:** Likely caused by insufficient permissions to the backup destination, a missing dependency, or a corrupted database.
+
+**🛠️ Recommended Action:** Check the backup user's permissions, verify necessary tools are installed, and review the database logs for errors preceding the backup.
+```
+
+#### Case B: Performance Slowdown Warning Card
+```html
+⚠️ Performance Bottleneck: Data_Sync ran 3.5x slower than its weekly rolling baseline.
+
+**🔍 Probable Cause:** High transaction payloads, unindexed lookup columns, or network latency overhead on a remote API route.
+
+**🛠️ Recommended Action:** Refactor query lookup indexes or shift execution windows to off-peak infrastructure hours.
+```
+
+This ensures your input and output examples are consistent with your final user interface.
+
+## 9. Appendix: Project Folder Structure Blueprint
 
 ```
 Cron-Job-Health-Dashboard/
@@ -213,17 +228,24 @@ Cron-Job-Health-Dashboard/
 │   └── llm_helper.py              # Gemini client SDK prompt manager
 ├── tests/
 │   └── test_basic.py              # Automated pytest validation components
-├── app.py                         # Interactive Streamlit data visualization dashboard
+├── app.py                         # Premium interactive visualization dashboard
 ├── requirements.txt               # Portability locked execution dependencies
 ├── prompts.md                     # Engineering breakdown of prompt structures
 └── ai_usage_note.md               # Mandatory development AI reflection document
 ```
-## 10. Demo Video & Presentation Materials
-### Demo Video Link
-👉 **[Watch our End-to-End Demo Video on Google Drive] https://drive.google.com/file/d/1J3NK05g9UR8ZD8LF9nSZEUFE_HhcGZTj/view?usp=drivesdk
 
-**Document Version:** 1.1
+## 10. Demo Video & Presentation Materials
+
+### Demo Video Link
+👉 **[Watch our End-to-End Demo Video on Google Drive]** https://drive.google.com/file/d/1J3NK05g9UR8ZD8LF9nSZEUFE_HhcGZTj/view?usp=drivesdk
+
+**Document Version:** 1.2
 
 **Status:** Evaluation Ready
 
-**Last Updated:** 2026-06-13
+**Last Updated:** June 15, 2026
+
+💡 What changed in this version:
+* Swapped the outdated **System Architecture Overview** diagram flowchart to reflect your single-pane title card layout.
+* Updated Section **3.3 (Streamlit UI)** and **3.5 (AI Anomaly Narration)** to clearly highlight the addition of the new custom parsing architecture and container systems.
+* Adjusted the text references to match the design updates in your codebase.
