@@ -39,8 +39,7 @@ The Cron Job Health Dashboard provides:
 
 ## 2. Team Information & Problem Statement Reference
 ### 🏢 Team Name / Problem ID: DE-11
-*Live Production Deployment URL:* [![Website Status](https://img.shields.io/badge/Render-Live_Dashboard-2k?style=flat&labelColor=1c1e21&color=3b82f6&logo=render)](https://cron-job-health-dashboard.onrender.com)
-
+*Live Production Deployment URL:* ![Website Status]https://cron-job-health-dashboard-1.onrender.com/
 | Role | Name | Email | Resume Document Link | Responsibilities |
 |------|------|-------|----------------------|------------------|
 | *Project Lead / AI Engineer* | POLI NANDINI | nandhinipoli2005@gmail.com | [📄 View PDF Resume](./resumes/NANDINI%20FINAL%20RESUME%20.pdf) | Prompt engineering, validation constraints, Gemini API SDK client integration |
