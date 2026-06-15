@@ -37,13 +37,15 @@ The Cron Job Health Dashboard provides:
 
 ---
 
-## 2. Team Member Information
+## 2. Team Information & Problem Statement Reference
+### 🏢 Team Name / Problem ID: DE-11
+*Live Production Deployment URL:* [![Website Status](https://img.shields.io/badge/Render-Live_Dashboard-2k?style=flat&labelColor=1c1e21&color=3b82f6&logo=render)](https://cron-job-health-dashboard.onrender.com)
 
-| Role | Name | Email | Contact | Responsibilities |
-|------|------|-------|---------|------------------|
-| **Project Lead / AI Engineer** | POLI NANDINI| nandhinipoli2005@gmail.com | 9676018629 | Prompt engineering, validation constraints, Gemini API SDK client integration |
-| **Backend / DevOps Specialist** | POKALA RAJESWARI | rajeswaripokala16@gmail.com | 9390745228 | SQLite metrics data pipelines, subprocess capturing frameworks, pytest configurations |
-| **Frontend Engineer** | PETLU ARAVINDH KUMAR | petluaravindhkumar@gmail.com | 9949609804 | Streamlit UI interactive development, Plotly timeline chart renderings |
+| Role | Name | Email | Resume Document Link | Responsibilities |
+|------|------|-------|----------------------|------------------|
+| *Project Lead / AI Engineer* | POLI NANDINI | nandhinipoli2005@gmail.com | [📄 View PDF Resume](./resumes/NANDINI%20FINAL%20RESUME%20.pdf) | Prompt engineering, validation constraints, Gemini API SDK client integration |
+| *Backend / DevOps Specialist* | POKALA RAJESWARI | rajeswaripokala16@gmail.com | [📄 View PDF Resume](./resumes/Pokala_Rajeswari%20(1).pdf) | SQLite metrics data pipelines, subprocess capturing frameworks, pytest configurations |
+| *Frontend UI Specialist* | PETLU ARAVINDH KUMAR | petluaravindhkumar@gmail.com | [📄 View PDF Resume](./resumes/Aravindhkumar_resume.pdf) | Streamlit UI interactive development, Plotly timeline chart renderings |
 
 ---
 
