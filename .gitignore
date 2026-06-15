@@ -5,8 +5,6 @@ __pycache__/
 .env
 
 # Database/Environment
-data/cron_logs.db
-data/test_cron_logs.db
 .venv/
 venv/
 .DS_Store
